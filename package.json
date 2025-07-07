@@ -4,9 +4,11 @@
   "description": "An app to help you decide what's for dinner!",
   "main": "index.jsx",
   "scripts": {
+    "start": "webpack serve --config webpack.config.js --mode development",
     "test": "test",
     "build": "webpack"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Project-Visi0n/tabetai-app.git"
@@ -34,6 +36,7 @@
   },
   "dependencies": {
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3"
   }
 }
