@@ -10,8 +10,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 })
 //check to see if MongoDB is connected
 .then(() => {
-  console.log('MongoDB is connected!');
 })
-.catch((err) => {
-  console.error('MongoDB not connected', err);
+.catch(() => {
 });

@@ -1,28 +1,19 @@
 import React from "react";
 
 function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
-  console.log('isFavorite:', isFavorite, 'for recipe:', recipe);
   return (
-    <div className="bg-white rounded-lg shadow p-4 flex flex-col items-center hover:bg-lavender transition-colors w-32 h-32">
+    <div className="bg-white rounded-lg shadow p-3 sm:p-4 flex flex-col items-center hover:bg-lavender transition-colors w-full max-w-xs mx-auto min-h-[140px] sm:min-h-[160px]">
       <img
         src={recipe.image}
         alt={recipe.title}
-        style={{
-          width: "32px",
-          height: "32px",
-          objectFit: "cover",
-          borderRadius: "0.5rem",
-          marginBottom: "0.5rem",
-          cursor: "pointer"
-        }}
+        className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg mb-2 cursor-pointer"
         onClick={onClick}
         tabIndex={0}
         role="button"
         aria-label={`View details for ${recipe.title}`}
       />
       <span
-        className="font-semibold text-center"
-        style={{ cursor: "pointer" }}
+        className="font-semibold text-center text-xs sm:text-sm leading-tight cursor-pointer flex-1 flex items-center px-1"
         onClick={onClick}
         tabIndex={0}
         role="button"
@@ -36,7 +27,7 @@ function RecipeCard({ recipe, isFavorite, onFavoriteToggle, onClick }) {
           e.stopPropagation();
           onFavoriteToggle(recipe, isFavorite);
         }}
-        className={`mt-2 text-2xl ${isFavorite ? "text-lavender" : "text-gray-300"}`}
+        className={`mt-2 text-xl sm:text-2xl ${isFavorite ? "text-lavender" : "text-gray-300"} touch-manipulation`}
         aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         tabIndex={0}
         style={{ cursor: "pointer" }}

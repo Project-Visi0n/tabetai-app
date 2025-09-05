@@ -6,8 +6,6 @@ import { UserProvider } from "./UserContext";
 import './input.css';
 import './output.css';
 
-console.log('CSS file imported');
-
 const root = createRoot(document.getElementById('root'));
 root.render(
   <UserProvider>

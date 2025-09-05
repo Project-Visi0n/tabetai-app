@@ -1,0 +1,110 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: tabetai-secrets
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check required secrets
+      run: |
+        echo "Checking secrets availability..."
+        if [ -z "${{ secrets.EC2_HOST }}" ]; then
+          echo "ERROR: EC2_HOST secret is missing"
+          exit 1
+        fi
+        if [ -z "${{ secrets.EC2_USER }}" ]; then
+          echo "ERROR: EC2_USER secret is missing"
+          exit 1
+        fi
+        if [ -z "${{ secrets.EC2_SSH_KEY }}" ]; then
+          echo "ERROR: EC2_SSH_KEY secret is missing"
+          exit 1
+        fi
+        echo "Required infrastructure secrets are available"
+        echo "Application secrets (MONGODB_URI, SPOONACULAR_API_KEY) will be configured if available"
+        
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy to EC2
+      run: |
+        echo "Deploying to EC2..."
+        
+        # Copy files to server
+        rsync -avz --delete \
+          --exclude 'node_modules' \
+          --exclude '.git' \
+          --exclude '*.log' \
+          ./ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/${{ secrets.EC2_USER }}/app/
+        
+        # Deploy on server
+        ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cd /home/${{ secrets.EC2_USER }}/app
+          
+          # Create .env file with environment variables
+          echo "PORT=8080" > backend/.env
+          echo "NODE_ENV=production" >> backend/.env
+          if [ -n "${{ secrets.MONGODB_URI }}" ]; then
+            echo "MONGODB_URI=${{ secrets.MONGODB_URI }}" >> backend/.env
+          else
+            echo "# MONGODB_URI not configured" >> backend/.env
+          fi
+          if [ -n "${{ secrets.SPOONACULAR_API_KEY }}" ]; then
+            echo "SPOONACULAR_API_KEY=${{ secrets.SPOONACULAR_API_KEY }}" >> backend/.env
+          else
+            echo "# SPOONACULAR_API_KEY not configured" >> backend/.env
+          fi
+          
+          # Install backend dependencies (production)
+          cd backend
+          npm ci --omit=dev || npm install
+          cd ..
+
+          # Build client files (needs dev deps)
+          # Install full deps for build (including devDependencies)
+          npm ci || npm install
+          npm run build
+          # After build, remove dev deps to keep production lean
+          npm prune --production || true
+          
+          # Ensure port 8080 is free (kill any process using it)
+          echo "Checking for processes on port 8080..."
+          sudo pkill -f "server.js" || true
+          sudo pkill -f ":8080" || true
+          sudo lsof -ti:8080 | xargs -r sudo kill -9 || true
+          sleep 3
+          
+          # Stop ALL pm2 processes to ensure clean slate
+          pm2 delete all || echo "No PM2 processes to delete"
+          pm2 kill || echo "PM2 daemon not running"
+          sleep 2
+
+          # Start new server
+          cd backend
+          pm2 start server.js --name tabetai-app
+          
+          # Check status
+          pm2 status
+          sleep 3
+          pm2 logs tabetai-app --lines 10
+        EOF
+        
+        echo "Deployment completed!"
+        
+    - name: Test deployment
+      run: |
+        echo "Testing deployment..."
+        curl -f http://${{ secrets.EC2_HOST }}:8080 || echo "Server not responding"

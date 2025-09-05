@@ -5,12 +5,6 @@ dotenv.config();
 
 const router = express.Router();
 const apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY || process.env.SPOONACULAR_API_KEY;
-console.log(apiKey);
-
-// Debug: log the API key status (do not log the key itself for security)
-if (!apiKey) {
-  console.error('Spoonacular API key is missing!');
-}
 
 // Search recipes by ingredients
 router.get('/recipes', async (req, res) => {
@@ -40,7 +34,7 @@ router.get('/recipes/:id', async (req, res) => {
     if (!response.ok) throw new Error('API error');
     const data = await response.json();
     res.json(data);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch recipe details.' });
   }
 });

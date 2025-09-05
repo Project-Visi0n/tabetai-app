@@ -6,6 +6,22 @@
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-green.svg)](https://nodejs.org/)
 [![React](https://img.shields.io/badge/React-v19.1.0-blue.svg)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-v8.16+-green.svg)](https://mongodb.com/)
+[![Deploy Status](https://img.shields.io/badge/Deploy-AWS%20Ready-orange.svg)](http://3.129.135.94:5000)
+
+## 🚀 Quick Start
+
+### Development Mode
+```bash
+./start-dev.sh
+```
+
+### Production Deployment
+```bash
+git push origin main  # Triggers automatic AWS deployment
+```
+
+> **⚠️ First-time deployment?** You need to configure GitHub secrets first!  
+> See [SECRETS_SETUP.md](SECRETS_SETUP.md) for detailed instructions.
 
 ## 🌟 Project Vision
 
@@ -58,10 +74,33 @@ Support diverse dietary needs and cultural preferences by allowing users to crea
 | **Authentication**  | Google OAuth                      | 0.12.2      |
 | **Build Tool**      | Webpack                           | 5.100.0     |
 | **External API**    | Spoonacular Recipe API            | -           |
-| **Deployment**      | Google Cloud Platform             | -           |
+| **Deployment**      | AWS EC2 with GitHub Actions       | -           |
+| **Process Manager** | PM2                               | -           |
 | **Code Quality**    | ESLint                            | 9.30.1      |
 
 </div>
+
+## 🚀 Deployment
+
+### **Production Environment**
+- **Live URL**: [http://3.129.135.94:5000](http://3.129.135.94:5000)
+- **Platform**: AWS EC2
+- **CI/CD**: GitHub Actions
+- **Process Manager**: PM2
+
+### **Deployment Methods**
+
+1. **Automated (Recommended)**:
+   ```bash
+   git push origin main  # Triggers GitHub Actions deployment
+   ```
+
+2. **Manual Deployment**:
+   ```bash
+   ./deploy-prod.sh 3.129.135.94 ~/.ssh/your-key.pem ubuntu
+   ```
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## ✨ Features
 

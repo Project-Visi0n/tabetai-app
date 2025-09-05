@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import RecipeCard from "./RecipeCard";
 import { useNavigate } from "react-router-dom";
 
-function SearchBar({ userId }) {
+function SearchBar({ userId, showResultsInline = true }) {
   const [query, setQuery] = useState("");
   const [recipes, setRecipes] = useState([]);
   // Removed selectedRecipe state, navigation now handles card display
@@ -84,37 +84,44 @@ function SearchBar({ userId }) {
 
 
   return (
-    <div>
-      <div className="flex mb-4">
+    <div className="w-full max-w-sm">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 mb-4">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          }}
           placeholder="What's in your fridge?"
-          className="px-3 py-2 rounded-l-lg border border-fridgeText text-fridgeText placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fridgeText w-[180px] text-sm"
+          className="px-3 py-2 rounded-lg sm:rounded-l-lg sm:rounded-r-none border border-fridgeText text-fridgeText placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-fridgeText w-full text-sm"
         />
         <button
           type="button"
           onClick={handleSearch}
-          className="bg-white text-fridgeText font-semibold px-4 py-2 border border-l-0 border-fridgeText rounded-r-lg hover:bg-gray-100 transition-colors text-sm"
+          className="bg-white text-fridgeText font-semibold px-4 py-2 border border-fridgeText rounded-lg sm:rounded-l-none sm:rounded-r-lg sm:border-l-0 hover:bg-gray-100 transition-colors text-sm whitespace-nowrap"
         >
-          Let’s take a look
+          Let&apos;s take a look
         </button>
       </div>
-      <div className="mt-4">
-        {error && <div className="text-red-500 text-center mb-2">{error}</div>}
-        <ul className="grid grid-cols-2 gap-4">
-          {recipes.map((recipe) => (
-            <li key={recipe.id}>
-              <RecipeCard
-                recipe={recipe}
-                isFavorite={recipe.favorite}
-                onFavoriteToggle={handleFavorite}
-                onClick={() => handleRecipeClick(recipe.id)}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
+      {showResultsInline && (
+        <div className="mt-4">
+          {error && <div className="text-red-500 text-center mb-2">{error}</div>}
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {recipes.map((recipe) => (
+              <li key={recipe.id}>
+                <RecipeCard
+                  recipe={recipe}
+                  isFavorite={recipe.favorite}
+                  onFavoriteToggle={handleFavorite}
+                  onClick={() => handleRecipeClick(recipe.id)}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

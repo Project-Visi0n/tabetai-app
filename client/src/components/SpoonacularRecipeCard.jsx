@@ -1,8 +1,5 @@
 import React, { useState } from "react";
 
-// For Create React App, env vars must be referenced at the top level
-const apiKey = process.env.REACT_APP_SPOONACULAR_API_KEY || "";
-
 // Usage: <SpoonacularRecipeCard title="Pizza" ingredients={["cheese", "dough"]} instructions={["Bake it"]} />
 function SpoonacularRecipeCard({ title, ingredients, instructions, image }) {
   const [cardUrl, setCardUrl] = useState(null);
@@ -36,7 +33,6 @@ function SpoonacularRecipeCard({ title, ingredients, instructions, image }) {
       setCardUrl(URL.createObjectURL(blob));
     } catch (err) {
       setError(err.message);
-      console.error("Spoonacular error:", err);
     } finally {
       setLoading(false);
     }

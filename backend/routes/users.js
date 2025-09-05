@@ -19,7 +19,7 @@ router.post('/register', async (req, res) => {
     const user = new User({ username, password });
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -27,7 +27,6 @@ router.post('/register', async (req, res) => {
 // POST /api/users/login - Login a user
 router.post('/login', async (req, res) => {
   try {
-    console.log('Login request body:', req.body);
     const { username, password } = req.body;
     let user = await User.findOne({ username });
     if (!user) {
@@ -39,13 +38,11 @@ router.post('/login', async (req, res) => {
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      console.log('Password does not match');
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
     res.json({ message: 'Login successful', user: { id: user._id, username: user.username } });
-  } catch (err) {
-    console.error('Login error:', err);
+  } catch {
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -53,7 +50,7 @@ router.post('/login', async (req, res) => {
 // POST /api/users/google-login - Login or register a Google user
 router.post('/google-login', async (req, res) => {
   try {
-    const { token, profile } = req.body;
+    const { profile } = req.body;
     if (!profile || !profile.sub) {
       return res.status(400).json({ message: 'Invalid Google profile' });
     }
@@ -78,7 +75,7 @@ router.post('/google-login', async (req, res) => {
         email: user.email
       }
     });
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: 'Server error' });
   }
 });

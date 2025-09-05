@@ -101,107 +101,140 @@ function CreateRecipePage() {
   };
 
   return (
-    <form onSubmit={handleSave} className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold mb-4">Create Recipe</h2>
-      <input
-        className="w-full mb-2 p-2 border rounded"
-        placeholder="Title"
-        value={recipe.title}
-        onChange={e => handleChange("title", e.target.value)}
-      />
-      <input
-        className="w-full mb-2 p-2 border rounded"
-        placeholder="Image URL"
-        value={recipe.image}
-        onChange={e => handleChange("image", e.target.value)}
-      />
-      <div className="mb-4">
-        <label className="font-semibold">Ingredients</label>
-        <table className="w-full mb-2">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Quantity</th>
-              <th>Unit</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {recipe.ingredients.map((ing, idx) => (
-              <tr key={idx}>
-                <td>
-                  <input
-                    className="p-1 border rounded"
-                    value={ing.name}
-                    onChange={e => handleIngredientChange(idx, "name", e.target.value)}
-                    placeholder="e.g. Flour"
-                  />
-                </td>
-                <td>
-                  <input
-                    className="p-1 border rounded"
-                    value={ing.quantity}
-                    onChange={e => handleIngredientChange(idx, "quantity", e.target.value)}
-                    placeholder="e.g. 2"
-                  />
-                </td>
-                <td>
-                  <input
-                    className="p-1 border rounded"
-                    value={ing.unit}
-                    onChange={e => handleIngredientChange(idx, "unit", e.target.value)}
-                    placeholder="e.g. cups"
-                  />
-                </td>
-                <td>
-                  <button type="button" onClick={() => removeIngredient(idx)} className="text-red-500">✕</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button type="button" onClick={addIngredient} className="text-blue-500 mb-2">+ Add Ingredient</button>
-      </div>
-      <div className="mb-4">
-        <label className="font-semibold">Instructions</label>
-        {recipe.instructions.map((step, idx) => (
-          <div key={idx} className="flex mb-1">
-            <textarea
-              className="w-full p-1 border rounded"
-              value={step}
-              onChange={e => handleInstructionChange(idx, e.target.value)}
-              placeholder={`Step ${idx + 1}`}
-            />
-            <button type="button" onClick={() => removeInstruction(idx)} className="text-red-500 ml-2">✕</button>
+    <div className="min-h-screen pt-16 sm:pt-20 px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-fridgeText">Create Recipe</h2>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Form Section */}
+          <form onSubmit={handleSave} className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+            <div className="space-y-4">
+              <input
+                className="w-full p-3 border rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                placeholder="Recipe Title"
+                value={recipe.title}
+                onChange={e => handleChange("title", e.target.value)}
+              />
+              <input
+                className="w-full p-3 border rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                placeholder="Image URL"
+                value={recipe.image}
+                onChange={e => handleChange("image", e.target.value)}
+              />
+              
+              {/* Ingredients Section */}
+              <div>
+                <label className="font-semibold text-sm sm:text-base mb-2 block">Ingredients</label>
+                <div className="space-y-2">
+                  {recipe.ingredients.map((ing, idx) => (
+                    <div key={idx} className="grid grid-cols-3 sm:grid-cols-4 gap-2 items-center">
+                      <input
+                        className="p-2 border rounded text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-yellow-300"
+                        value={ing.name}
+                        onChange={e => handleIngredientChange(idx, "name", e.target.value)}
+                        placeholder="Ingredient"
+                      />
+                      <input
+                        className="p-2 border rounded text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-yellow-300"
+                        value={ing.quantity}
+                        onChange={e => handleIngredientChange(idx, "quantity", e.target.value)}
+                        placeholder="Qty"
+                      />
+                      <input
+                        className="p-2 border rounded text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-yellow-300"
+                        value={ing.unit}
+                        onChange={e => handleIngredientChange(idx, "unit", e.target.value)}
+                        placeholder="Unit"
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => removeIngredient(idx)} 
+                        className="text-red-500 text-lg hover:text-red-700 touch-manipulation p-1"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button 
+                  type="button" 
+                  onClick={addIngredient} 
+                  className="text-blue-500 text-sm mt-2 hover:text-blue-700 touch-manipulation"
+                >
+                  + Add Ingredient
+                </button>
+              </div>
+              
+              {/* Instructions Section */}
+              <div>
+                <label className="font-semibold text-sm sm:text-base mb-2 block">Instructions</label>
+                <div className="space-y-2">
+                  {recipe.instructions.map((step, idx) => (
+                    <div key={idx} className="flex gap-2">
+                      <div className="flex-shrink-0 w-6 h-6 bg-yellow-300 rounded-full flex items-center justify-center text-xs font-bold">
+                        {idx + 1}
+                      </div>
+                      <textarea
+                        className="flex-1 p-2 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-yellow-300 min-h-[80px]"
+                        value={step}
+                        onChange={e => handleInstructionChange(idx, e.target.value)}
+                        placeholder={`Step ${idx + 1} instructions...`}
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => removeInstruction(idx)} 
+                        className="text-red-500 hover:text-red-700 touch-manipulation p-1"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button 
+                  type="button" 
+                  onClick={addInstruction} 
+                  className="text-blue-500 text-sm mt-2 hover:text-blue-700 touch-manipulation"
+                >
+                  + Add Step
+                </button>
+              </div>
+              
+              {/* Recipe Details */}
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  className="p-3 border rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                  type="number"
+                  placeholder="Prep time (min)"
+                  value={recipe.readyInMinutes}
+                  onChange={e => handleChange("readyInMinutes", e.target.value)}
+                />
+                <input
+                  className="p-3 border rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                  type="number"
+                  placeholder="Servings"
+                  value={recipe.servings}
+                  onChange={e => handleChange("servings", e.target.value)}
+                />
+              </div>
+              
+              <button
+                className="w-full bg-yellow-300 hover:bg-yellow-400 px-4 py-3 rounded-lg font-semibold transition-colors text-sm sm:text-base touch-manipulation"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Creating Recipe..." : "Create Recipe"}
+              </button>
+            </div>
+          </form>
+          
+          {/* Preview Section */}
+          <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
+            <h3 className="font-semibold text-lg mb-4 text-center">Recipe Preview</h3>
+            <CustomRecipeCard recipe={recipe} />
           </div>
-        ))}
-        <button type="button" onClick={addInstruction} className="text-blue-500">+ Add Step</button>
+        </div>
       </div>
-      <div className="flex gap-2 mb-4">
-        <input
-          className="p-2 border rounded"
-          type="number"
-          placeholder="Ready in minutes"
-          value={recipe.readyInMinutes}
-          onChange={e => handleChange("readyInMinutes", e.target.value)}
-        />
-        <input
-          className="p-2 border rounded"
-          type="number"
-          placeholder="Servings"
-          value={recipe.servings}
-          onChange={e => handleChange("servings", e.target.value)}
-        />
-      </div>
-      <button
-        className="bg-yellow-300 hover:bg-yellow-400 px-4 py-2 rounded font-semibold"
-        type="submit"
-        disabled={loading}
-      >
-        {loading ? "Saving..." : "Create Recipe"}
-      </button>
-      <CustomRecipeCard recipe={recipe} />
-    </form>
+    </div>
   );
 }
 

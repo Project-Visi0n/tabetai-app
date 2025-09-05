@@ -32,9 +32,7 @@ router.get('/:id/card', async (req, res) => {
       const apiUrl = `https://api.spoonacular.com/recipes/${req.params.id}/card?apiKey=${SPOONACULAR_API_KEY}`;
       const apiRes = await fetch(apiUrl);
       if (!apiRes.ok) {
-        const errorText = await apiRes.text();
-        console.error('Spoonacular error:', errorText);
-        return res.status(500).json({ error: 'Spoonacular error: ' + errorText });
+        return res.status(500).json({ error: 'Spoonacular API error' });
       }
       const data = await apiRes.json();
       if (data.url) {
@@ -66,16 +64,13 @@ router.get('/:id/card', async (req, res) => {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
     if (!apiRes.ok) {
-      const errorText = await apiRes.text();
-      console.error('Spoonacular error:', errorText);
-      return res.status(500).json({ error: 'Failed to generate recipe card: ' + errorText });
+      return res.status(500).json({ error: 'Failed to generate recipe card' });
     }
     const buffer = await apiRes.buffer();
     res.set('Content-Type', 'image/png');
     res.send(buffer);
-  } catch (err) {
-    console.error('Recipe card error:', err);
-    res.status(500).json({ error: err.message });
+  } catch {
+    res.status(500).json({ error: 'Failed to generate recipe card' });
   }
 });
 
@@ -111,8 +106,7 @@ router.patch("/:id", async (req, res) => {
       return res.status(404).json({ message: "Recipe not found" });
     }
     res.json(updatedRecipe);
-  } catch (err) {
-    console.error("Error updated recipe", err);
+  } catch {
     res.status(500).json({ error: "Failed to update recipe" });
   }
 });
